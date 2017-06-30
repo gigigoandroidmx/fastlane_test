@@ -1,0 +1,77 @@
+def readVersion() {
+    def versionFile = new File('./version.properties')
+    def version = new Properties()
+    def stream
+    try {
+        stream = new FileInputStream(versionFile)
+        version.load(stream)
+    } catch (FileNotFoundException ignore) {
+    } finally {
+        if (stream != null) stream.close()
+    }
+    if (!version['major']) version['major'] = "1"
+    if (!version['minor']) version['minor'] = "0"
+    if (!version['build']) version['build'] = "0"
+    return version
+}
+
+def readVersionName() {
+    def version = readVersion()
+    return "${version['major']}.${version['minor']}"
+}
+
+def readBuildCode() {
+    def version = readVersion()
+    def build = version['build'] as int
+    return build
+}
+
+def incrementBuildNumber() {
+    def versionFile = new File('./version.properties')
+
+    def version = readVersion()
+
+    def build = version['build'] as int
+    build++
+    version['build'] = build.toString()
+
+    def stream = new FileOutputStream(versionFile)
+    try {
+        version.store(stream, null)
+    } finally {
+        stream.close()
+    }
+
+    println "Build number is noew... " + build
+
+    return build
+}
+
+def incrementVersionNumber(def type='minor') {
+    def versionFile = new File('./version.properties')
+
+    def version = readVersion()
+
+    def major = version['major'] as int
+    def minor = version['minor'] as int
+
+    if (type=='major') {
+        major++
+        minor=0
+    } else if(type=='minor') {
+        minor++
+    }
+
+    version['major'] = major.toString()
+    version['minor'] = minor.toString()
+
+    def stream = new FileOutputStream(versionFile)
+    try {
+        version.store(stream, null)
+    } finally {
+        stream.close()
+    }
+
+    println "Version is noew... " + major + "." + minor
+    return major + "." + minor
+}

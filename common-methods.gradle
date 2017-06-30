@@ -1,0 +1,153 @@
+ext {
+
+  STRING = "String"
+  BOOLEAN = "boolean"
+  INT = "int"
+
+  getVariantFieldValue = { field, buildType, type, key ->
+    def value
+
+    if (field instanceof Map) {
+      if (field["$buildType"] == null) {
+        println("not defined explicit param value for \'${key}\' in \'${buildType}\' configuration. Using first value founded")
+        value = field.entrySet().toList().first().getValue()
+      } else {
+        value = field["$buildType"]
+      }
+    } else {
+      value = field
+    }
+
+    if (value != null) {
+      if (type.toLowerCase().equals("string")) {
+        value = "\"${value}\""
+      }
+      else {
+        value = "${value}"
+      }
+    }
+
+    return value
+  };
+
+  setVariantApplicationId = { variant, appId ->
+    def mergedFlavor = variant.getVariantData().getVariantConfiguration().getMergedFlavor()
+    mergedFlavor.setApplicationId(appId)
+    println("applicationId: " + appId)
+  };
+
+  setVariantModeDebugValue = { variant, key, type ->
+    def value = (variant.buildType.name == 'debug' || variant.buildType.name == 'staging')
+    setVariantBuildConfigField(variant, value, key, type)
+  };
+
+  setVariantBuildConfigField = { variant, field, key, type ->
+    def value = getVariantFieldValue(field, variant.buildType.name, type, key)
+
+    if (value != null) {
+      try {
+        variant.buildConfigField(type, key, value)
+        println("BuildConfig -> " + type + ":" + key + " = " + value)
+      } catch (Exception ex) {
+
+        println("Null value: BuildConfig -> " + type + ":" + key + " not added!")
+      }
+    } else {
+      println("Null value: BuildConfig -> " + type + ":" + key + " not added!")
+    }
+  };
+
+  setVariantResValue = { variant, field, key, type ->
+    def value = getVariantFieldValue(field, variant.buildType.name, type, key)
+    try {
+      variant.resValue(type, key, value)
+      println("Res -> " + type + ":" + key + " = " + value)
+    } catch (Exception ex) {
+      println("Null value: Res -> " + type + ":" + key + " = " + value)
+    }
+  };
+
+  readVersion = this.&readVersion
+  readVersionName = this.&readVersionName
+  readBuildCode = this.&readBuildCode
+  incrementBuildNumber = this.&incrementBuildNumber
+  incrementVersionNumber = this.&incrementVersionNumber
+}
+
+def readVersion() {
+  def versionFile = new File('./version.properties')
+  def version = new Properties()
+  def stream
+  try {
+    stream = new FileInputStream(versionFile)
+    version.load(stream)
+  } catch (FileNotFoundException ignore) {
+  } finally {
+    if (stream != null) stream.close()
+  }
+  if (!version['major']) version['major'] = "1"
+  if (!version['minor']) version['minor'] = "0"
+  if (!version['build']) version['build'] = "0"
+  return version
+}
+
+def readVersionName() {
+  def version = readVersion()
+  return "${version['major']}.${version['minor']}"
+}
+
+def readBuildCode() {
+  def version = readVersion()
+  def build = version['build'] as int
+  return build
+}
+
+def incrementBuildNumber() {
+  def versionFile = new File('./version.properties')
+
+  def version = readVersion()
+
+  def build = version['build'] as int
+  build++
+  version['build'] = build.toString()
+
+  def stream = new FileOutputStream(versionFile)
+  try {
+    version.store(stream, null)
+  } finally {
+    stream.close()
+  }
+
+  println "Build number is noew... " + build
+
+  return build
+}
+
+def incrementVersionNumber(def type='minor') {
+  def versionFile = new File('./version.properties')
+
+  def version = readVersion()
+
+  def major = version['major'] as int
+  def minor = version['minor'] as int
+
+  if (type=='major') {
+    major++
+    minor=0
+  } else if(type=='minor') {
+    minor++
+  }
+
+  version['major'] = major.toString()
+  version['minor'] = minor.toString()
+
+  def stream = new FileOutputStream(versionFile)
+  try {
+    version.store(stream, null)
+  } finally {
+    stream.close()
+  }
+
+  println "Version is noew... " + major + "." + minor
+  return major + "." + minor
+}

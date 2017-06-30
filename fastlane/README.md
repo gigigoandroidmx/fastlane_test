@@ -45,6 +45,11 @@ Submit a new Beta Build to Crashlytics Beta
 fastlane android appliveryDebug
 ```
 Submit a new Degub Build to Applivery
+### android incrementVersion
+```
+fastlane android incrementVersion
+```
+Changue version of application - user version:[major|minor] for versioning
 ### android deploy
 ```
 fastlane android deploy
