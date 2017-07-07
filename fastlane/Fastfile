@@ -33,11 +33,13 @@ platform :android do
       build_type: "Debug"
     )
 
+    changelog = changelog_from_git_commits
+
     applivery(
-      app_id: "59541a5d22ea18594cb88fe6",            # Your Applivery App Id
+      app_id: "59541a5d22ea18594cb88fe6",                           # Your Applivery App Id
       api_key: "cf1e400255db7adf254f9428c7622a9d5b638f21",          # Your Applivery API Key
-      notes: changelog_from_git_commits,# OPTIONAL: A human-readable release notes
-      tags: "debug"                    # OPTIONAL: Your build tags
+      notes: changelog,                                             # OPTIONAL: A human-readable release notes
+      tags: "debug"                                                 # OPTIONAL: Your build tags
     )
   end
 
