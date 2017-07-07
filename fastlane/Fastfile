@@ -19,7 +19,7 @@ platform :android do
   before_all do
     # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
 
-    ensure_git_status_clean
+    #ensure_git_status_clean
 
 
   end
@@ -38,7 +38,7 @@ platform :android do
     applivery(
       app_id: "59541a5d22ea18594cb88fe6",                           # Your Applivery App Id
       api_key: "cf1e400255db7adf254f9428c7622a9d5b638f21",          # Your Applivery API Key
-      notes: changelog,                                             # OPTIONAL: A human-readable release notes
+      notes: "#{changelog}",                                         # OPTIONAL: A human-readable release notes
       tags: "debug"                                                 # OPTIONAL: Your build tags
     )
   end
@@ -54,7 +54,33 @@ platform :android do
       gradle(task: "doFixedVersionIncrement")
     end
 
-    appliveryDebug
+    file = File.new("../version.properties", "r")
+        while (line = file.gets)
+            if line.include? "major"
+                versionComponents = line.strip.split('=')
+                major = versionComponents[versionComponents.length - 1].tr("\"","")
+                break
+            end
+        end
+        while (line = file.gets)
+            if line.include? "minor"
+                versionComponents = line.strip.split('=')
+                minor = versionComponents[versionComponents.length - 1].tr("\"","")
+                break
+            end
+        end
+        while (line = file.gets)
+            if line.include? "fixed"
+                versionComponents = line.strip.split('=')
+                fixed = versionComponents[versionComponents.length - 1].tr("\"","")
+                break
+            end
+        end
+    file.close
+
+    puts "version_name = #{major}.#{minor}.#{fixed}"
+
+    #appliveryDebug
    end
 
   # You can define as many lanes as you want
@@ -89,6 +115,30 @@ platform :android do
     message: exception.message
   )
   end
+
+
+  def getVersionName(path, constant_name)
+            version_name = "0"
+            if !File.file?(path)
+                UI.message(" -> No file exist at path: (#{path})!")
+                return version_name
+            end
+            begin
+                file = File.new(path, "r")
+                while (line = file.gets)
+                    if line.include? constant_name
+                       versionComponents = line.strip.split('=')
+                       version_name = versionComponents[versionComponents.length - 1].tr("\"","")
+                       break
+                    end
+                end
+                file.close
+            rescue => err
+                UI.error("An exception occured while readinf gradle file: #{err}")
+                err
+            end
+            return version_name
+        end
 end
 
 
