@@ -49,7 +49,7 @@ Submit a new Degub Build to Applivery
 ```
 fastlane android incrementVersion
 ```
-Changue version of application - user version:[major|minor] for versioning
+Changue version of application - user version:[major|minor|fixed] for versioning
 ### android deploy
 ```
 fastlane android deploy

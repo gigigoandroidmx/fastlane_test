@@ -37,6 +37,7 @@ platform :android do
   desc “Submit a new Degub Build to Applivery”
   lane :appliveryDebug do |options|
     gradle(task: "clean")
+    gradle(task: "test")
     gradle(
       task: "assemble",
       build_type: "Debug"
@@ -54,17 +55,15 @@ platform :android do
     )
   end
 
-  desc "Changue version of application - user version:[major|minor] for versioning"
+  desc "Changue version of application - user version:[major|minor|fixed] for versioning"
     lane :incrementVersion do |options|
 
-      if(options[:versionChangue]=='minor')
-        gradle(task: "doBuildNumberIncrement")
+      if(options[:version]=='minor')
         gradle(task: "doMinorVersionIncrement")
-      elsif (options[:versionChangue]=='major')
-        gradle(task: "doBuildNumberIncrement")
+      elsif (options[:version]=='major')
         gradle(task: "doMajorVersionIncrement")
       else
-        gradle(task: "doBuildNumberIncrement")
+        gradle(task: "doFixedVersionIncrement")
       end
 
       #appliveryDebug
