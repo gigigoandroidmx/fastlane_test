@@ -35,6 +35,11 @@ xcode-select --install
 fastlane android deploy_debug
 ```
 Submit a new Degub Build to Applivery
+### android deploy_release
+```
+fastlane android deploy_release
+```
+Submit a new Release Build to Google Play
 ### android incrementVersion
 ```
 fastlane android incrementVersion

@@ -1,2 +1,2 @@
-json_key_file "" # Path to the json secret file - Follow https://github.com/fastlane/supply#setup to get one
-package_name "com.eidien04gmail.fastlanetest" # e.g. com.krausefx.app
+package_name "com.lovedone.inapppurchase"
+json_key_file “/Users/adan.gutierrez/AndroidStudio/FastLaneTest/fastlane/key.json"

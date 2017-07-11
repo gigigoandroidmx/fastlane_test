@@ -32,9 +32,9 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.eidien04gmail.fastlanetest"
+        applicationId "com.lovedone.inapppurchase"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 21
         versionCode rootProject.ext.readBuildCode()
         versionName rootProject.ext.readVersionName()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -47,6 +47,7 @@ android {
         }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -69,6 +70,10 @@ android {
     task doBuildNumberIncrement << {
         println "Incrementing build number ..."
         rootProject.ext.incrementBuildNumber()
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 

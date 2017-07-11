@@ -53,6 +53,22 @@ platform :android do
 
   end
 
+  desc “Submit a new Release Build to Google Play”
+  lane :deploy_release do |options|
+    gradle(task: "clean")
+    gradle(
+      task: "assemble",
+      build_type: "Release"
+    )
+
+    supply(
+        track: 'beta'
+      )
+
+      gradle(task: "doBuildNumberIncrement")
+
+  end
+
   desc "Changue version of application - use version:[major|minor|fixed] for versioning"
   lane :incrementVersion do |options|
 
