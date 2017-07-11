@@ -30,16 +30,16 @@ xcode-select --install
 
 # Available Actions
 ## Android
-### android appliveryDebug
+### android deploy_debug
 ```
-fastlane android appliveryDebug
+fastlane android deploy_debug
 ```
 Submit a new Degub Build to Applivery
 ### android incrementVersion
 ```
 fastlane android incrementVersion
 ```
-Changue version of application - user version:[major|minor|fixed] for versioning
+Changue version of application - use version:[major|minor|fixed] for versioning
 
 ----
 

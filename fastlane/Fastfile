@@ -11,7 +11,7 @@
 
 # This is the minimum version number required.
 # Update this, if you use features of a newer version
-fastlane_version "2.41.0"
+fastlane_version "2.46.0"
 
 default_platform :android
 
@@ -20,12 +20,10 @@ platform :android do
     # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
 
     #ensure_git_status_clean
-
-
   end
 
   desc “Submit a new Degub Build to Applivery”
-  lane :appliveryDebug do |options|
+  lane :deploy_debug do |options|
     gradle(task: "clean")
     gradle(task: "test")
     gradle(
@@ -35,15 +33,27 @@ platform :android do
 
     changelog = changelog_from_git_commits
 
+    version = getVersion()
+    puts "Version: #{version}"
+
+    if !git_tag_exists(tag: "v#{version}")
+        add_git_tag(
+            tag: "v#{version}"
+        )
+        push_git_tags
+     end
+
     applivery(
       app_id: "59541a5d22ea18594cb88fe6",                           # Your Applivery App Id
       api_key: "cf1e400255db7adf254f9428c7622a9d5b638f21",          # Your Applivery API Key
-      notes: "#{changelog}",                                         # OPTIONAL: A human-readable release notes
-      tags: "debug"                                                 # OPTIONAL: Your build tags
+      notes: "#{changelog}",                                        # OPTIONAL: A human-readable release notes
+      tags: "debug",                                                # OPTIONAL: Your build tags
+      name: "v#{version}"                                           # OPTIONAL: A human-readable name for your build
     )
+
   end
 
-  desc "Changue version of application - user version:[major|minor|fixed] for versioning"
+  desc "Changue version of application - use version:[major|minor|fixed] for versioning"
   lane :incrementVersion do |options|
 
     if(options[:version]=='minor')
@@ -54,34 +64,29 @@ platform :android do
       gradle(task: "doFixedVersionIncrement")
     end
 
+   end
+
+   private_lane :getVersion do
     file = File.new("../version.properties", "r")
-        while (line = file.gets)
-            if line.include? "major"
-                versionComponents = line.strip.split('=')
-                major = versionComponents[versionComponents.length - 1].tr("\"","")
-                break
-            end
+      while (line = file.gets)
+        if line.include? "major"
+          versionComponents = line.strip.split('=')
+          major = versionComponents[versionComponents.length - 1].tr("\"","")
         end
-        while (line = file.gets)
-            if line.include? "minor"
-                versionComponents = line.strip.split('=')
-                minor = versionComponents[versionComponents.length - 1].tr("\"","")
-                break
-            end
+        if line.include? "minor"
+          versionComponents = line.strip.split('=')
+          minor = versionComponents[versionComponents.length - 1].tr("\"","")
         end
-        while (line = file.gets)
-            if line.include? "fixed"
-                versionComponents = line.strip.split('=')
-                fixed = versionComponents[versionComponents.length - 1].tr("\"","")
-                break
-            end
+        if line.include? "fixed"
+          versionComponents = line.strip.split('=')
+          fixed = versionComponents[versionComponents.length - 1].tr("\"","")
         end
+      end
     file.close
 
-    puts "version_name = #{major}.#{minor}.#{fixed}"
-
-    #appliveryDebug
-   end
+    puts "#{major}.#{minor}.#{fixed}"
+    value = "#{major}.#{minor}.#{fixed}"
+  end
 
   # You can define as many lanes as you want
 
@@ -99,7 +104,7 @@ platform :android do
   #  message: "Successfully deployed new App Update."
   #)
 
-    notify "Fastlane finished '#{lane}' successfully" # Mac OS X Notification
+    notification(title: "Fastlane", message: "Fastlane finished '#{lane}' successfully") # Mac OS X Notification
   end
 
   error do |lane, exception|
@@ -115,35 +120,10 @@ platform :android do
     message: exception.message
   )
   end
-
-
-  def getVersionName(path, constant_name)
-            version_name = "0"
-            if !File.file?(path)
-                UI.message(" -> No file exist at path: (#{path})!")
-                return version_name
-            end
-            begin
-                file = File.new(path, "r")
-                while (line = file.gets)
-                    if line.include? constant_name
-                       versionComponents = line.strip.split('=')
-                       version_name = versionComponents[versionComponents.length - 1].tr("\"","")
-                       break
-                    end
-                end
-                file.close
-            rescue => err
-                UI.error("An exception occured while readinf gradle file: #{err}")
-                err
-            end
-            return version_name
-        end
 end
-
 
 # More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
 # All available actions: https://docs.fastlane.tools/actions
 
-# fastlane reports which actions are used. No personal data is recorded. 
+# fastlane reports which actions are used. No personal data is recorded.
 # Learn more at https://github.com/fastlane/fastlane#metrics

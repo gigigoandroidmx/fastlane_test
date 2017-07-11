@@ -5,22 +5,62 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: Verifying required fastlane version" time="0.004735">
+      <testcase classname="fastlane.lanes" name="00: Verifying required fastlane version" time="0.0021">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: default_platform" time="0.004059">
+      <testcase classname="fastlane.lanes" name="01: default_platform" time="0.001821">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: gradle" time="1.525117">
+      <testcase classname="fastlane.lanes" name="02: gradle" time="1.866393">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: notify" time="0.212228">
+      <testcase classname="fastlane.lanes" name="03: gradle" time="7.598512">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="04: gradle" time="2.934748">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="05: changelog_from_git_commits" time="0.053281">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="06: Switch to android getVersion lane" time="0.002174">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="07: applivery" time="24.799618">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="08: git_tag_exists" time="0.012337">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="09: add_git_tag" time="0.021883">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="10: push_git_tags" time="9.26754">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="11: notification" time="0.256194">
         
       </testcase>
     
